@@ -125,14 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function isValidIndianMobile(mobile) {
     const cleanNum = mobile.trim();
-    // Rejects non-digits
     if (!/^\d+$/.test(cleanNum)) return false;
-    // Rejects anything not exactly 10 digits
     if (cleanNum.length !== 10) return false;
-    // Rejects dummy repeating digits like 0000000000, 1111111111, 9999999999, 1234567890
     if (/^(\d)\1{9}$/.test(cleanNum)) return false;
     if (cleanNum === '1234567890' || cleanNum === '0123456789') return false;
-    // Must start with 6, 7, 8, or 9
     return /^[6-9]\d{9}$/.test(cleanNum);
   }
 
@@ -198,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 5. WEB AUDIO SYNTHESIZER FOR SOUND EFFECTS
+  // 5. OPTIMIZED CRISP SOUND SYNTHESIZER (QUICK & IMMEDIATE STOP, NO VIBRATION)
   // --------------------------------------------------------------------------
   let soundEnabled = true;
   let audioCtx = null;
@@ -217,7 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const now = audioCtx.currentTime;
     
-    const bufferSize = audioCtx.sampleRate * 0.15;
+    // Short 0.05s buffer - stops immediately
+    const bufferSize = Math.floor(audioCtx.sampleRate * 0.05);
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const output = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -229,31 +226,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(800, now);
-    filter.frequency.exponentialRampToValueAtTime(3200, now + 0.12);
-    filter.Q.setValueAtTime(3, now);
+    filter.frequency.setValueAtTime(1200, now);
+    filter.frequency.exponentialRampToValueAtTime(2800, now + 0.04);
+    filter.Q.setValueAtTime(2, now);
 
     const gain = audioCtx.createGain();
-    gain.gain.setValueAtTime(0.7, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
     whiteNoise.connect(filter);
     filter.connect(gain);
     gain.connect(audioCtx.destination);
+    
     whiteNoise.start(now);
+    whiteNoise.stop(now + 0.05);
 
     const osc = audioCtx.createOscillator();
     const oscGain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(1200, now);
-    osc.frequency.exponentialRampToValueAtTime(300, now + 0.12);
+    osc.frequency.setValueAtTime(1400, now);
+    osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
 
-    oscGain.gain.setValueAtTime(0.3, now);
-    oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+    oscGain.gain.setValueAtTime(0.15, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
     osc.connect(oscGain);
     oscGain.connect(audioCtx.destination);
+    
     osc.start(now);
+    osc.stop(now + 0.04);
   }
 
   function playPopSound() {
@@ -266,15 +267,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const gain = audioCtx.createGain();
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, now);
-    osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
+    osc.frequency.setValueAtTime(500, now);
+    osc.frequency.exponentialRampToValueAtTime(180, now + 0.03);
 
-    gain.gain.setValueAtTime(0.8, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
 
     osc.connect(gain);
     gain.connect(audioCtx.destination);
+    
     osc.start(now);
+    osc.stop(now + 0.03);
   }
 
   const soundBtn = document.getElementById('sound-toggle-btn');
