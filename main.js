@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 5. OPTIMIZED CRISP SOUND SYNTHESIZER (QUICK & IMMEDIATE STOP, NO VIBRATION)
+  // 5. ORIGINAL SPIDER-MAN "THWIP!" SOUND (AUTHENTIC TONE, TIGHT STOP, NO VIBRATION)
   // --------------------------------------------------------------------------
   let soundEnabled = true;
   let audioCtx = null;
@@ -212,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
     const now = audioCtx.currentTime;
+    const duration = 0.08; // Tight duration: exact original "THWIP!" tone with 0 lingering vibration
     
-    // Short 0.05s buffer - stops immediately
-    const bufferSize = Math.floor(audioCtx.sampleRate * 0.05);
+    const bufferSize = Math.floor(audioCtx.sampleRate * duration);
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const output = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -226,35 +226,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(1200, now);
-    filter.frequency.exponentialRampToValueAtTime(2800, now + 0.04);
-    filter.Q.setValueAtTime(2, now);
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(3200, now + 0.07);
+    filter.Q.setValueAtTime(3, now);
 
     const gain = audioCtx.createGain();
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    gain.gain.setValueAtTime(0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
 
     whiteNoise.connect(filter);
     filter.connect(gain);
     gain.connect(audioCtx.destination);
     
     whiteNoise.start(now);
-    whiteNoise.stop(now + 0.05);
+    whiteNoise.stop(now + 0.08);
 
     const osc = audioCtx.createOscillator();
     const oscGain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(1400, now);
-    osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(300, now + 0.07);
 
-    oscGain.gain.setValueAtTime(0.15, now);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+    oscGain.gain.setValueAtTime(0.25, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
 
     osc.connect(oscGain);
     oscGain.connect(audioCtx.destination);
     
     osc.start(now);
-    osc.stop(now + 0.04);
+    osc.stop(now + 0.08);
   }
 
   function playPopSound() {
@@ -267,17 +267,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const gain = audioCtx.createGain();
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(500, now);
-    osc.frequency.exponentialRampToValueAtTime(180, now + 0.03);
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.05);
 
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     
     osc.start(now);
-    osc.stop(now + 0.03);
+    osc.stop(now + 0.05);
   }
 
   const soundBtn = document.getElementById('sound-toggle-btn');
