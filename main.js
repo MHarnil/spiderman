@@ -54,22 +54,65 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 2. PINCODE CHECKER & QUANTITY CALCULATOR (499 / 599 / 699)
+  // 2. PINCODE CHECKER & AUTO-FETCH CITY & STATE API
   // --------------------------------------------------------------------------
   const pincodeBtn = document.getElementById('pincode-btn');
-  const pincodeInput = document.getElementById('pincode-input');
-  const pincodeMsg = document.getElementById('pincode-msg');
+  const pincodeInputPDP = document.getElementById('pincode-input');
+  const pincodeMsgPDP = document.getElementById('pincode-msg');
 
   if (pincodeBtn) {
     pincodeBtn.addEventListener('click', () => {
-      const code = pincodeInput.value.trim();
+      const code = pincodeInputPDP.value.trim();
       if (code.length >= 6) {
-        pincodeMsg.textContent = `✓ FREE Delivery to ${code} by Tomorrow, 3 PM! Cash on Delivery Available.`;
-        pincodeMsg.style.color = '#22c55e';
+        pincodeMsgPDP.textContent = `✓ FREE Delivery to ${code} by Tomorrow, 3 PM! Cash on Delivery Available.`;
+        pincodeMsgPDP.style.color = '#22c55e';
         playPopSound();
       } else {
-        pincodeMsg.textContent = '❌ Please enter a valid 6-digit Pincode.';
-        pincodeMsg.style.color = '#ff3366';
+        pincodeMsgPDP.textContent = '❌ Please enter a valid 6-digit Pincode.';
+        pincodeMsgPDP.style.color = '#ff3366';
+      }
+    });
+  }
+
+  // AUTO-FETCH CITY & STATE IN ORDER MODAL FORM (INDIA POST API)
+  const formPincode = document.getElementById('form-pincode');
+  const formCity = document.getElementById('form-city');
+  const formState = document.getElementById('form-state');
+  const pincodeLoader = document.getElementById('pincode-loader');
+
+  if (formPincode) {
+    formPincode.addEventListener('input', async () => {
+      const code = formPincode.value.trim();
+      if (code.length === 6 && /^\d+$/.test(code)) {
+        if (pincodeLoader) {
+          pincodeLoader.textContent = '🔍 Fetching...';
+          pincodeLoader.style.color = '#00d2ff';
+          pincodeLoader.style.display = 'inline';
+        }
+        try {
+          const res = await fetch(`https://api.postalpincode.in/pincode/${code}`);
+          const data = await res.json();
+          if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+            const po = data[0].PostOffice[0];
+            if (formCity) formCity.value = po.District || po.Block || po.Name;
+            if (formState) formState.value = po.State;
+            if (pincodeLoader) {
+              pincodeLoader.textContent = '✓ City & State Auto-filled!';
+              pincodeLoader.style.color = '#22c55e';
+            }
+            playPopSound();
+          } else {
+            if (pincodeLoader) {
+              pincodeLoader.textContent = '❌ Invalid Pincode';
+              pincodeLoader.style.color = '#ff3366';
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching pincode:', err);
+          if (pincodeLoader) pincodeLoader.style.display = 'none';
+        }
+      } else {
+        if (pincodeLoader) pincodeLoader.style.display = 'none';
       }
     });
   }
@@ -385,10 +428,19 @@ document.addEventListener('DOMContentLoaded', () => {
     checkoutForm.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const inputs = checkoutForm.querySelectorAll('.form-input');
-      const name = inputs[0] ? inputs[0].value.trim() : 'Customer';
-      const phone = inputs[1] ? inputs[1].value.trim() : 'N/A';
-      const address = inputs[2] ? inputs[2].value.trim() : 'N/A';
+      const formName = document.getElementById('form-name');
+      const formPhone = document.getElementById('form-phone');
+      const formPincode = document.getElementById('form-pincode');
+      const formCity = document.getElementById('form-city');
+      const formState = document.getElementById('form-state');
+      const formAddress = document.getElementById('form-address');
+
+      const name = formName ? formName.value.trim() : 'Customer';
+      const phone = formPhone ? formPhone.value.trim() : 'N/A';
+      const pincode = formPincode ? formPincode.value.trim() : 'N/A';
+      const city = formCity ? formCity.value.trim() : 'N/A';
+      const state = formState ? formState.value.trim() : 'N/A';
+      const address = formAddress ? formAddress.value.trim() : 'N/A';
       
       const selectedPay = document.querySelector('.payment-option.selected');
       const payMethod = selectedPay ? selectedPay.textContent.trim() : '💵 Cash on Delivery';
@@ -404,7 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const message = `🛒 *NEW ORDER RECEIVED - SPIDER-MAN STORE* 🕷️\n\n` +
         `👤 *Customer Name:* ${name}\n` +
         `📞 *Mobile Number:* ${phone}\n` +
-        `📍 *Delivery Address:* ${address}\n` +
+        `📍 *Address:* ${address}\n` +
+        `🏙️ *City/District:* ${city}\n` +
+        `🗺️ *State:* ${state}\n` +
+        `📌 *Pincode:* ${pincode}\n` +
         `📦 *Product:* Spider Web Shooter Hero Launcher Set\n` +
         `🔢 *Quantity:* ${qtyText}\n` +
         `💵 *Total Amount:* ${total} (${payMethod})\n\n` +
@@ -424,6 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       modal.classList.remove('active');
       checkoutForm.reset();
+      if (pincodeLoader) pincodeLoader.style.display = 'none';
     });
   }
 
