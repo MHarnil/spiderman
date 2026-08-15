@@ -572,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 8. STICKY BAR & DIRECT WHATSAPP CHECKOUT FORM WITH 2-STEP OTP FLOW
+  // 8. STICKY BAR & DIRECT FAST WHATSAPP CHECKOUT FORM
   // --------------------------------------------------------------------------
   const stickyBar = document.getElementById('sticky-buy-bar');
   window.addEventListener('scroll', () => {
@@ -584,27 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('close-modal');
   const modalTriggers = document.querySelectorAll('.trigger-order-modal');
 
-  const stepOrderDetails = document.getElementById('step-order-details');
-  const stepOtpVerify = document.getElementById('step-otp-verify');
-
-  const btnSendOtp = document.getElementById('btn-send-otp');
-  const btnVerifyOtp = document.getElementById('btn-verify-otp');
-  const btnResendOtp = document.getElementById('btn-resend-otp');
-  const btnEditDetails = document.getElementById('btn-edit-details');
-
-  const displayOtpPhone = document.getElementById('display-otp-phone');
-  const generatedOtpCodeSpan = document.getElementById('generated-otp-code');
-  const otpStatusMsg = document.getElementById('otp-status-msg');
-
-  const modalHeading = document.getElementById('modal-heading');
-  const modalSubheading = document.getElementById('modal-subheading');
-
-  let currentGeneratedOtp = '';
-
-  function generate4DigitOtp() {
-    return Math.floor(1000 + Math.random() * 9000).toString();
-  }
-
   modalTriggers.forEach((btn) => {
     btn.addEventListener('click', () => {
       modal.classList.add('active');
@@ -612,209 +591,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      modal.classList.remove('active');
-      resetModalToStep1();
-    });
-  }
-
+  if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
   if (modal) {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('active');
-        resetModalToStep1();
-      }
-    });
-  }
-
-  function resetModalToStep1() {
-    if (stepOrderDetails) stepOrderDetails.style.display = 'block';
-    if (stepOtpVerify) stepOtpVerify.style.display = 'none';
-    if (modalHeading) modalHeading.textContent = '⚡ QUICK ORDER FORM';
-    if (modalSubheading) modalSubheading.textContent = 'Complete your address for fast delivery (Cash on Delivery available)';
-    if (otpStatusMsg) otpStatusMsg.textContent = '';
-    clearOtpInputs();
-  }
-
-  function clearOtpInputs() {
-    ['otp-1', 'otp-2', 'otp-3', 'otp-4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-  }
-
-  // OTP Digits Auto-Advance Input Handling
-  const otpInputs = ['otp-1', 'otp-2', 'otp-3', 'otp-4'].map(id => document.getElementById(id)).filter(Boolean);
-  otpInputs.forEach((input, index) => {
-    input.addEventListener('input', (e) => {
-      if (input.value.length === 1 && index < otpInputs.length - 1) {
-        otpInputs[index + 1].focus();
-      }
-    });
-
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
-        otpInputs[index - 1].focus();
-      }
-    });
-  });
-
-  // STEP 1: CLICK "SEND OTP & PLACE ORDER"
-  if (btnSendOtp) {
-    btnSendOtp.addEventListener('click', () => {
-      const formName = document.getElementById('form-name');
-      const formPhoneInput = document.getElementById('form-phone');
-      const formPincode = document.getElementById('form-pincode');
-      const formCity = document.getElementById('form-city');
-      const formAddress = document.getElementById('form-address');
-
-      const name = formName ? formName.value.trim() : '';
-      const phoneVal = formPhoneInput ? formPhoneInput.value.trim() : '';
-      const pincode = formPincode ? formPincode.value.trim() : '';
-      const city = formCity ? formCity.value.trim() : '';
-      const address = formAddress ? formAddress.value.trim() : '';
-
-      if (!name) {
-        alert('Please enter your Full Name.');
-        if (formName) formName.focus();
-        return;
-      }
-
-      if (!isValidIndianMobile(phoneVal)) {
-        alert('❌ INVALID MOBILE NUMBER!\n\nPlease enter a valid 10-digit Indian Mobile Number starting with 6, 7, 8, or 9.');
-        if (formPhoneInput) formPhoneInput.focus();
-        return;
-      }
-
-      if (pincode.length < 6 || !city || !address) {
-        alert('Please enter your complete Pincode and Delivery Address.');
-        if (formAddress) formAddress.focus();
-        return;
-      }
-
-      // Generate Random 4-digit OTP
-      currentGeneratedOtp = generate4DigitOtp();
-      
-      if (displayOtpPhone) displayOtpPhone.textContent = `+91 ${phoneVal}`;
-      if (generatedOtpCodeSpan) generatedOtpCodeSpan.textContent = currentGeneratedOtp;
-
-      if (stepOrderDetails) stepOrderDetails.style.display = 'none';
-      if (stepOtpVerify) stepOtpVerify.style.display = 'block';
-
-      if (modalHeading) modalHeading.textContent = '🔒 PHONE OTP VERIFICATION';
-      if (modalSubheading) modalSubheading.textContent = `Enter the 4-digit OTP sent to +91 ${phoneVal}`;
-
-      playThwipSound();
-      setTimeout(() => {
-        if (otpInputs[0]) otpInputs[0].focus();
-      }, 200);
-    });
-  }
-
-  // STEP 2: CLICK "VERIFY OTP & CONFIRM ORDER"
-  if (btnVerifyOtp) {
-    btnVerifyOtp.addEventListener('click', () => {
-      const enteredOtp = otpInputs.map(input => input.value.trim()).join('');
-
-      if (enteredOtp.length !== 4) {
-        if (otpStatusMsg) {
-          otpStatusMsg.textContent = '❌ Please enter all 4 OTP digits!';
-          otpStatusMsg.style.color = '#ff3366';
-        }
-        return;
-      }
-
-      if (enteredOtp === currentGeneratedOtp) {
-        if (otpStatusMsg) {
-          otpStatusMsg.textContent = '✓ OTP Verified Successfully! Redirecting to WhatsApp...';
-          otpStatusMsg.style.color = '#22c55e';
-        }
-
-        const formName = document.getElementById('form-name');
-        const formPhoneInput = document.getElementById('form-phone');
-        const formPincode = document.getElementById('form-pincode');
-        const formCity = document.getElementById('form-city');
-        const formState = document.getElementById('form-state');
-        const formAddress = document.getElementById('form-address');
-
-        const name = formName ? formName.value.trim() : 'Customer';
-        const phone = formPhoneInput ? formPhoneInput.value.trim() : 'N/A';
-        const pincode = formPincode ? formPincode.value.trim() : 'N/A';
-        const city = formCity ? formCity.value.trim() : 'N/A';
-        const state = formState ? formState.value.trim() : 'N/A';
-        const address = formAddress ? formAddress.value.trim() : 'N/A';
-        
-        const selectedPay = document.querySelector('.payment-option.selected');
-        const payMethod = selectedPay ? selectedPay.textContent.trim() : '💵 Cash on Delivery';
-        
-        const qtySelect = document.getElementById('qty-selector');
-        const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Set - ₹499';
-        
-        const orderTotalDisplay = document.getElementById('order-total-display');
-        const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹499';
-
-        const waNumber = '919328856046';
-        
-        const message = `🛒 *NEW VERIFIED ORDER RECEIVED - SPIDER-MAN STORE* 🕷️\n\n` +
-          `🔒 *Phone OTP Verified:* YES (Code: ${enteredOtp})\n` +
-          `👤 *Customer Name:* ${name}\n` +
-          `📞 *Mobile Number:* ${phone}\n` +
-          `📍 *Address:* ${address}\n` +
-          `🏙️ *City/District:* ${city}\n` +
-          `🗺️ *State:* ${state}\n` +
-          `📌 *Pincode:* ${pincode}\n` +
-          `📦 *Product:* Spider Web Shooter Hero Launcher Set\n` +
-          `🔢 *Quantity:* ${qtyText}\n` +
-          `💵 *Total Amount:* ${total} (${payMethod})\n\n` +
-          `⚡ *Please confirm my order and send dispatch details!*`;
-
-        const encodedMsg = encodeURIComponent(message);
-        const waUrl = `https://wa.me/${waNumber}?text=${encodedMsg}`;
-
-        if (window.confetti) {
-          confetti({ particleCount: 160, spread: 85, origin: { y: 0.6 } });
-        }
-        playThwipSound();
-
-        setTimeout(() => {
-          window.open(waUrl, '_blank');
-          modal.classList.remove('active');
-          resetModalToStep1();
-          const checkoutForm = document.getElementById('checkout-form');
-          if (checkoutForm) checkoutForm.reset();
-        }, 600);
-
-      } else {
-        if (otpStatusMsg) {
-          otpStatusMsg.textContent = '❌ Invalid OTP Code. Please enter the correct OTP!';
-          otpStatusMsg.style.color = '#ff3366';
-        }
-        playPopSound();
-      }
-    });
-  }
-
-  // RESEND OTP BUTTON
-  if (btnResendOtp) {
-    btnResendOtp.addEventListener('click', () => {
-      currentGeneratedOtp = generate4DigitOtp();
-      if (generatedOtpCodeSpan) generatedOtpCodeSpan.textContent = currentGeneratedOtp;
-      clearOtpInputs();
-      if (otpStatusMsg) {
-        otpStatusMsg.textContent = '✓ New OTP Code Sent!';
-        otpStatusMsg.style.color = '#00d2ff';
-      }
-      playPopSound();
-      if (otpInputs[0]) otpInputs[0].focus();
-    });
-  }
-
-  // EDIT DETAILS BUTTON
-  if (btnEditDetails) {
-    btnEditDetails.addEventListener('click', () => {
-      resetModalToStep1();
-      playPopSound();
+      if (e.target === modal) modal.classList.remove('active');
     });
   }
 
@@ -826,5 +606,75 @@ document.addEventListener('DOMContentLoaded', () => {
       playPopSound();
     });
   });
+
+  const checkoutForm = document.getElementById('checkout-form');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const formName = document.getElementById('form-name');
+      const formPhoneInput = document.getElementById('form-phone');
+      const formPincode = document.getElementById('form-pincode');
+      const formCity = document.getElementById('form-city');
+      const formState = document.getElementById('form-state');
+      const formAddress = document.getElementById('form-address');
+
+      const phoneVal = formPhoneInput ? formPhoneInput.value.trim() : '';
+      
+      // STRICT MOBILE NUMBER VALIDATION CHECK
+      if (!isValidIndianMobile(phoneVal)) {
+        alert('❌ INVALID MOBILE NUMBER!\n\nPlease enter a valid 10-digit Indian Mobile Number starting with 6, 7, 8, or 9.');
+        if (formPhoneInput) formPhoneInput.focus();
+        return;
+      }
+
+      const name = formName ? formName.value.trim() : 'Customer';
+      const phone = phoneVal;
+      const pincode = formPincode ? formPincode.value.trim() : 'N/A';
+      const city = formCity ? formCity.value.trim() : 'N/A';
+      const state = formState ? formState.value.trim() : 'N/A';
+      const address = formAddress ? formAddress.value.trim() : 'N/A';
+      
+      const selectedPay = document.querySelector('.payment-option.selected');
+      const payMethod = selectedPay ? selectedPay.textContent.trim() : '💵 Cash on Delivery';
+      
+      const qtySelect = document.getElementById('qty-selector');
+      const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Set - ₹499';
+      
+      const orderTotalDisplay = document.getElementById('order-total-display');
+      const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹499';
+
+      const waNumber = '919328856046';
+      
+      const message = `🛒 *NEW ORDER RECEIVED - SPIDER-MAN STORE* 🕷️\n\n` +
+        `👤 *Customer Name:* ${name}\n` +
+        `📞 *Mobile Number:* ${phone}\n` +
+        `📍 *Address:* ${address}\n` +
+        `🏙️ *City/District:* ${city}\n` +
+        `🗺️ *State:* ${state}\n` +
+        `📌 *Pincode:* ${pincode}\n` +
+        `📦 *Product:* Spider Web Shooter Hero Launcher Set\n` +
+        `🔢 *Quantity:* ${qtyText}\n` +
+        `💵 *Total Amount:* ${total} (${payMethod})\n\n` +
+        `⚡ *Please confirm my order and send dispatch details!*`;
+
+      const encodedMsg = encodeURIComponent(message);
+      const waUrl = `https://wa.me/${waNumber}?text=${encodedMsg}`;
+
+      if (window.confetti) {
+        confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
+      }
+      playThwipSound();
+
+      setTimeout(() => {
+        window.open(waUrl, '_blank');
+      }, 400);
+
+      modal.classList.remove('active');
+      checkoutForm.reset();
+      if (phoneValidationMsg) phoneValidationMsg.style.display = 'none';
+      if (pincodeLoader) pincodeLoader.style.display = 'none';
+    });
+  }
 
 });
