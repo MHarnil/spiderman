@@ -117,6 +117,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --------------------------------------------------------------------------
+  // 3. STRICT INDIAN MOBILE NUMBER VALIDATION LOGIC
+  // --------------------------------------------------------------------------
+  const formPhone = document.getElementById('form-phone');
+  const phoneValidationMsg = document.getElementById('phone-validation-msg');
+
+  function isValidIndianMobile(mobile) {
+    const cleanNum = mobile.trim();
+    // Rejects non-digits
+    if (!/^\d+$/.test(cleanNum)) return false;
+    // Rejects anything not exactly 10 digits
+    if (cleanNum.length !== 10) return false;
+    // Rejects dummy repeating digits like 0000000000, 1111111111, 9999999999, 1234567890
+    if (/^(\d)\1{9}$/.test(cleanNum)) return false;
+    if (cleanNum === '1234567890' || cleanNum === '0123456789') return false;
+    // Must start with 6, 7, 8, or 9
+    return /^[6-9]\d{9}$/.test(cleanNum);
+  }
+
+  if (formPhone) {
+    formPhone.addEventListener('input', () => {
+      const val = formPhone.value.trim();
+      if (val.length === 0) {
+        if (phoneValidationMsg) phoneValidationMsg.style.display = 'none';
+        return;
+      }
+
+      if (isValidIndianMobile(val)) {
+        if (phoneValidationMsg) {
+          phoneValidationMsg.textContent = '✓ Valid Mobile';
+          phoneValidationMsg.style.color = '#22c55e';
+          phoneValidationMsg.style.display = 'inline';
+        }
+      } else {
+        if (phoneValidationMsg) {
+          phoneValidationMsg.textContent = '❌ Invalid Mobile (Start with 6-9)';
+          phoneValidationMsg.style.color = '#ff3366';
+          phoneValidationMsg.style.display = 'inline';
+        }
+      }
+    });
+  }
+
   // Quantity Selector Pricing (1 Set: 499, 2 Sets: 599, 3 Sets: 699)
   const qtySelect = document.getElementById('qty-selector');
   const orderPriceDisplay = document.getElementById('order-price-display');
@@ -136,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 3. TABS SWITCHER (SPECS / DESC / SAFETY)
+  // 4. TABS SWITCHER (SPECS / DESC / SAFETY)
   // --------------------------------------------------------------------------
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
@@ -155,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 4. WEB AUDIO SYNTHESIZER FOR SOUND EFFECTS
+  // 5. WEB AUDIO SYNTHESIZER FOR SOUND EFFECTS
   // --------------------------------------------------------------------------
   let soundEnabled = true;
   let audioCtx = null;
@@ -250,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 5. TARGET SHOOTER GAME CANVAS
+  // 6. TARGET SHOOTER GAME CANVAS
   // --------------------------------------------------------------------------
   const gameContainer = document.getElementById('game-container');
   const gameCanvas = document.getElementById('game-canvas');
@@ -388,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 6. STICKY BAR & DIRECT WHATSAPP CHECKOUT FORM (NUMBER: 9328856046)
+  // 7. STICKY BAR & DIRECT WHATSAPP CHECKOUT FORM (STRICT MOBILE VALIDATION)
   // --------------------------------------------------------------------------
   const stickyBar = document.getElementById('sticky-buy-bar');
   window.addEventListener('scroll', () => {
@@ -429,14 +472,23 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       
       const formName = document.getElementById('form-name');
-      const formPhone = document.getElementById('form-phone');
+      const formPhoneInput = document.getElementById('form-phone');
       const formPincode = document.getElementById('form-pincode');
       const formCity = document.getElementById('form-city');
       const formState = document.getElementById('form-state');
       const formAddress = document.getElementById('form-address');
 
+      const phoneVal = formPhoneInput ? formPhoneInput.value.trim() : '';
+      
+      // STRICT MOBILE NUMBER VALIDATION CHECK
+      if (!isValidIndianMobile(phoneVal)) {
+        alert('❌ INVALID MOBILE NUMBER!\n\nPlease enter a valid 10-digit Indian Mobile Number starting with 6, 7, 8, or 9.');
+        if (formPhoneInput) formPhoneInput.focus();
+        return;
+      }
+
       const name = formName ? formName.value.trim() : 'Customer';
-      const phone = formPhone ? formPhone.value.trim() : 'N/A';
+      const phone = phoneVal;
       const pincode = formPincode ? formPincode.value.trim() : 'N/A';
       const city = formCity ? formCity.value.trim() : 'N/A';
       const state = formState ? formState.value.trim() : 'N/A';
@@ -479,6 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       modal.classList.remove('active');
       checkoutForm.reset();
+      if (phoneValidationMsg) phoneValidationMsg.style.display = 'none';
       if (pincodeLoader) pincodeLoader.style.display = 'none';
     });
   }

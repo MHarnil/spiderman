@@ -497,7 +497,7 @@
     </button>
   </div>
 
-  <!-- CHECKOUT ORDER MODAL (AUTO PINCODE FETCHING & SEPARATE CITY/STATE) -->
+  <!-- CHECKOUT ORDER MODAL (REAL-TIME MOBILE VALIDATION & AUTO PINCODE API) -->
   <div class="modal-overlay" id="order-modal">
     <div class="modal-card">
       <button class="close-modal" id="close-modal">&times;</button>
@@ -510,9 +510,13 @@
           <input type="text" class="form-input" id="form-name" placeholder="e.g. Rahul Sharma" required>
         </div>
 
+        <!-- Strict 10-Digit Indian Mobile Number Field -->
         <div class="form-group">
-          <label>Mobile Number (for delivery SMS & WhatsApp) *</label>
-          <input type="tel" class="form-input" id="form-phone" placeholder="e.g. 9876543210" required>
+          <label>Mobile Number (10-Digit Mobile Number) *</label>
+          <div style="position: relative;">
+            <input type="tel" class="form-input" id="form-phone" maxlength="10" placeholder="e.g. 9876543210" required>
+            <span id="phone-validation-msg" style="position: absolute; right: 10px; top: 10px; font-size: 0.74rem; font-weight: 700; display: none;"></span>
+          </div>
         </div>
 
         <!-- Pincode Field with Live Auto-Fetch Status -->
