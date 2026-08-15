@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 6. STICKY BAR & CHECKOUT FORM LOGIC
+  // 6. STICKY BAR & DIRECT WHATSAPP CHECKOUT FORM (NUMBER: 9328856046)
   // --------------------------------------------------------------------------
   const stickyBar = document.getElementById('sticky-buy-bar');
   window.addEventListener('scroll', () => {
@@ -384,11 +384,44 @@ document.addEventListener('DOMContentLoaded', () => {
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      
+      const inputs = checkoutForm.querySelectorAll('.form-input');
+      const name = inputs[0] ? inputs[0].value.trim() : 'Customer';
+      const phone = inputs[1] ? inputs[1].value.trim() : 'N/A';
+      const address = inputs[2] ? inputs[2].value.trim() : 'N/A';
+      
+      const selectedPay = document.querySelector('.payment-option.selected');
+      const payMethod = selectedPay ? selectedPay.textContent.trim() : '💵 Cash on Delivery';
+      
+      const qtySelect = document.getElementById('qty-selector');
+      const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Set - ₹499';
+      
+      const orderTotalDisplay = document.getElementById('order-total-display');
+      const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹499';
+
+      const waNumber = '919328856046';
+      
+      const message = `🛒 *NEW ORDER RECEIVED - SPIDER-MAN STORE* 🕷️\n\n` +
+        `👤 *Customer Name:* ${name}\n` +
+        `📞 *Mobile Number:* ${phone}\n` +
+        `📍 *Delivery Address:* ${address}\n` +
+        `📦 *Product:* Spider Web Shooter Hero Launcher Set\n` +
+        `🔢 *Quantity:* ${qtyText}\n` +
+        `💵 *Total Amount:* ${total} (${payMethod})\n\n` +
+        `⚡ *Please confirm my order and send dispatch details!*`;
+
+      const encodedMsg = encodeURIComponent(message);
+      const waUrl = `https://wa.me/${waNumber}?text=${encodedMsg}`;
+
       if (window.confetti) {
-        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+        confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
       }
       playThwipSound();
-      alert('🎉 ORDER PLACED SUCCESSFULLY!\n\nThank you for ordering the Hero Launcher Wrist Toy Set. Your order will be delivered within 2-3 business days with Free Cash on Delivery!');
+
+      setTimeout(() => {
+        window.open(waUrl, '_blank');
+      }, 400);
+
       modal.classList.remove('active');
       checkoutForm.reset();
     });
