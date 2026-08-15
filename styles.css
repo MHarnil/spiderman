@@ -1019,6 +1019,28 @@ body::before {
   color: var(--spider-red);
 }
 
+/* 4-DIGIT OTP BOX STYLING */
+.otp-digit-input {
+  width: 52px;
+  height: 58px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: var(--input-bg);
+  border: 2px solid var(--input-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  outline: none;
+  font-family: var(--font-heading);
+  transition: var(--transition);
+}
+
+.otp-digit-input:focus {
+  border-color: var(--spider-red);
+  box-shadow: 0 0 12px var(--spider-red-glow);
+  background: rgba(255, 0, 51, 0.12);
+}
+
 .form-group {
   margin-bottom: 12px;
 }
@@ -1199,5 +1221,11 @@ footer {
   .sticky-buy-bar .btn-primary {
     padding: 8px 14px;
     font-size: 0.78rem;
+  }
+
+  .otp-digit-input {
+    width: 44px;
+    height: 50px;
+    font-size: 1.3rem;
   }
 }

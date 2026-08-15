@@ -500,81 +500,125 @@
     </button>
   </div>
 
-  <!-- CHECKOUT ORDER MODAL (REAL-TIME MOBILE VALIDATION & AUTO PINCODE API) -->
+  <!-- CHECKOUT ORDER MODAL (WITH STEP-BY-STEP OTP VERIFICATION & WHATSAPP) -->
   <div class="modal-overlay" id="order-modal">
     <div class="modal-card">
       <button class="close-modal" id="close-modal">&times;</button>
-      <h3 class="modal-title">⚡ QUICK ORDER FORM</h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">Complete your address for fast delivery (Cash on Delivery available)</p>
+      <h3 class="modal-title" id="modal-heading">⚡ QUICK ORDER FORM</h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;" id="modal-subheading">Complete your address for fast delivery (Cash on Delivery available)</p>
 
       <form id="checkout-form">
-        <div class="form-group">
-          <label>Full Name *</label>
-          <input type="text" class="form-input" id="form-name" placeholder="e.g. Rahul Sharma" required>
+        
+        <!-- STEP 1: CUSTOMER & ADDRESS DETAILS -->
+        <div id="step-order-details">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" class="form-input" id="form-name" placeholder="e.g. Rahul Sharma" required>
+          </div>
+
+          <!-- Strict 10-Digit Indian Mobile Number Field -->
+          <div class="form-group">
+            <label>Mobile Number (10-Digit Mobile Number) *</label>
+            <div style="position: relative;">
+              <input type="tel" class="form-input" id="form-phone" maxlength="10" placeholder="e.g. 9876543210" required>
+              <span id="phone-validation-msg" style="position: absolute; right: 10px; top: 10px; font-size: 0.74rem; font-weight: 700; display: none;"></span>
+            </div>
+          </div>
+
+          <!-- Pincode Field with Live Auto-Fetch Status -->
+          <div class="form-group">
+            <label>Delivery Pincode (6-Digits) *</label>
+            <div style="position: relative;">
+              <input type="text" class="form-input" id="form-pincode" maxlength="6" placeholder="e.g. 380001" required>
+              <span id="pincode-loader" style="position: absolute; right: 12px; top: 10px; font-size: 0.76rem; font-weight: 700; display: none;"></span>
+            </div>
+          </div>
+
+          <!-- Auto-Fetched City & State Separate Fields Grid -->
+          <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label>City / District *</label>
+              <input type="text" class="form-input" id="form-city" placeholder="Auto-filled City" required>
+            </div>
+            <div>
+              <label>State *</label>
+              <input type="text" class="form-input" id="form-state" placeholder="Auto-filled State" required>
+            </div>
+          </div>
+
+          <!-- Street & House Address Field -->
+          <div class="form-group">
+            <label>House No, Building & Street Address *</label>
+            <input type="text" class="form-input" id="form-address" placeholder="e.g. Flat 402, Sunshine Apartments, MG Road" required>
+          </div>
+
+          <div class="form-group">
+            <label>Select Payment Method</label>
+            <div class="payment-methods">
+              <div class="payment-option selected" data-method="cod">💵 Cash on Delivery</div>
+              <div class="payment-option" data-method="upi">⚡ Instant UPI / GPay</div>
+            </div>
+          </div>
+
+          <div class="order-summary-box">
+            <div class="summary-row">
+              <span>Hero Launcher Set</span>
+              <span id="order-price-display">₹499</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping Charge</span>
+              <span style="color:var(--rating-green);">FREE</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total Payable Amount</span>
+              <span id="order-total-display">₹499</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary" id="btn-send-otp" style="width: 100%; padding: 14px; font-size: 1rem;">
+            📱 SEND OTP & PLACE ORDER
+          </button>
         </div>
 
-        <!-- Strict 10-Digit Indian Mobile Number Field -->
-        <div class="form-group">
-          <label>Mobile Number (10-Digit Mobile Number) *</label>
-          <div style="position: relative;">
-            <input type="tel" class="form-input" id="form-phone" maxlength="10" placeholder="e.g. 9876543210" required>
-            <span id="phone-validation-msg" style="position: absolute; right: 10px; top: 10px; font-size: 0.74rem; font-weight: 700; display: none;"></span>
+        <!-- STEP 2: SMS OTP VERIFICATION -->
+        <div id="step-otp-verify" style="display: none; text-align: center; padding: 10px 0;">
+          <div style="background: rgba(0, 210, 255, 0.1); border: 1px solid var(--web-cyan); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+            <p style="font-size: 0.85rem; color: var(--text-main); font-weight: 600;">
+              📲 SMS OTP sent to <span id="display-otp-phone" style="color: var(--web-cyan);">+91 9876543210</span>
+            </p>
+            <p style="font-size: 0.76rem; color: var(--rating-green); margin-top: 4px; font-weight: 700;" id="demo-otp-banner">
+              🔑 DEMO TEST OTP: <span id="generated-otp-code" style="font-size: 1.1rem; letter-spacing: 2px; color: #fff; background: var(--spider-red); padding: 2px 8px; border-radius: 4px;"></span>
+            </p>
+          </div>
+
+          <label style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 10px; font-weight: 600;">
+            Enter 4-Digit Security OTP *
+          </label>
+
+          <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 14px;">
+            <input type="text" class="otp-digit-input" maxlength="1" id="otp-1" autofocus>
+            <input type="text" class="otp-digit-input" maxlength="1" id="otp-2">
+            <input type="text" class="otp-digit-input" maxlength="1" id="otp-3">
+            <input type="text" class="otp-digit-input" maxlength="1" id="otp-4">
+          </div>
+
+          <div id="otp-status-msg" style="font-size: 0.82rem; font-weight: 700; margin-bottom: 14px; min-height: 20px;"></div>
+
+          <button type="button" class="btn-primary" id="btn-verify-otp" style="width: 100%; padding: 14px; font-size: 1rem;">
+            ✓ VERIFY OTP & CONFIRM ORDER
+          </button>
+
+          <div style="margin-top: 14px; font-size: 0.78rem;">
+            <button type="button" id="btn-resend-otp" style="background: none; border: none; color: var(--web-cyan); cursor: pointer; text-decoration: underline; font-weight: 600;">
+              Didn't get OTP? Resend Code
+            </button>
+            <br>
+            <button type="button" id="btn-edit-details" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; margin-top: 6px;">
+              ✏️ Edit Order Details
+            </button>
           </div>
         </div>
 
-        <!-- Pincode Field with Live Auto-Fetch Status -->
-        <div class="form-group">
-          <label>Delivery Pincode (6-Digits) *</label>
-          <div style="position: relative;">
-            <input type="text" class="form-input" id="form-pincode" maxlength="6" placeholder="e.g. 380001" required>
-            <span id="pincode-loader" style="position: absolute; right: 12px; top: 10px; font-size: 0.76rem; font-weight: 700; display: none;"></span>
-          </div>
-        </div>
-
-        <!-- Auto-Fetched City & State Separate Fields Grid -->
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>City / District *</label>
-            <input type="text" class="form-input" id="form-city" placeholder="Auto-filled City" required>
-          </div>
-          <div>
-            <label>State *</label>
-            <input type="text" class="form-input" id="form-state" placeholder="Auto-filled State" required>
-          </div>
-        </div>
-
-        <!-- Street & House Address Field -->
-        <div class="form-group">
-          <label>House No, Building & Street Address *</label>
-          <input type="text" class="form-input" id="form-address" placeholder="e.g. Flat 402, Sunshine Apartments, MG Road" required>
-        </div>
-
-        <div class="form-group">
-          <label>Select Payment Method</label>
-          <div class="payment-methods">
-            <div class="payment-option selected" data-method="cod">💵 Cash on Delivery</div>
-            <div class="payment-option" data-method="upi">⚡ Instant UPI / GPay</div>
-          </div>
-        </div>
-
-        <div class="order-summary-box">
-          <div class="summary-row">
-            <span>Hero Launcher Set</span>
-            <span id="order-price-display">₹499</span>
-          </div>
-          <div class="summary-row">
-            <span>Shipping Charge</span>
-            <span style="color:var(--rating-green);">FREE</span>
-          </div>
-          <div class="summary-row total">
-            <span>Total Payable Amount</span>
-            <span id="order-total-display">₹499</span>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
-          🎉 CONFIRM & PLACE ORDER NOW
-        </button>
       </form>
     </div>
   </div>
