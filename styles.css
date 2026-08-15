@@ -273,34 +273,35 @@ body::before {
   white-space: nowrap;
 }
 
-/* USER UPLOADED HD SPIDER-MAN BACK WALLPAPER IMAGE BACKGROUND FOR BUTTONS */
+/* HIGH-CONTRAST SPIDER-MAN IMAGE BACKGROUND FOR BUTTONS (REMOVED WASHED-OUT LIGHT OVERLAY) */
 .btn-primary {
-  background: linear-gradient(135deg, rgba(230, 0, 35, 0.75), rgba(15, 25, 45, 0.88)), 
-              url('assets/spiderman_custom_bg.jpg') center/cover no-repeat;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(200, 0, 30, 0.45), rgba(10, 12, 22, 0.65)), 
+              url('assets/spiderman_custom_bg.jpg') center 30% / cover no-repeat;
+  color: #ffffff;
+  border: 1px solid rgba(255, 0, 51, 0.5);
+  padding: 14px 20px;
   border-radius: var(--radius-md);
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 4px 20px rgba(255, 0, 51, 0.5);
+  box-shadow: 0 4px 20px rgba(255, 0, 51, 0.6), 0 0 10px rgba(0, 0, 0, 0.5);
   transition: var(--transition);
   text-transform: uppercase;
   white-space: nowrap;
   position: relative;
   overflow: hidden;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
 }
 
 .btn-primary:active, .btn-primary:hover {
-  background: linear-gradient(135deg, rgba(255, 20, 60, 0.85), rgba(25, 38, 70, 0.92)), 
-              url('assets/spiderman_custom_bg.jpg') center/cover no-repeat;
-  box-shadow: 0 6px 25px rgba(255, 0, 51, 0.8);
+  background: linear-gradient(135deg, rgba(255, 0, 51, 0.55), rgba(15, 20, 35, 0.75)), 
+              url('assets/spiderman_custom_bg.jpg') center 30% / cover no-repeat;
+  box-shadow: 0 6px 28px rgba(255, 0, 51, 0.85);
+  border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-1px);
 }
 
