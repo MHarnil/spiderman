@@ -273,12 +273,12 @@ body::before {
   white-space: nowrap;
 }
 
-/* SPIDER-MAN IMAGE BACKGROUND FOR ACTION BUTTONS (REPLACED SOLID RED) */
+/* USER UPLOADED HD SPIDER-MAN BACK WALLPAPER IMAGE BACKGROUND FOR BUTTONS */
 .btn-primary {
-  background: linear-gradient(135deg, rgba(230, 0, 35, 0.78), rgba(120, 0, 20, 0.92)), 
-              url('assets/product_action.jpg') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(230, 0, 35, 0.75), rgba(15, 25, 45, 0.88)), 
+              url('assets/spiderman_custom_bg.jpg') center/cover no-repeat;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   padding: 12px 18px;
   border-radius: var(--radius-md);
   font-weight: 800;
@@ -288,18 +288,18 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 4px 20px var(--spider-red-glow);
+  box-shadow: 0 4px 20px rgba(255, 0, 51, 0.5);
   transition: var(--transition);
   text-transform: uppercase;
   white-space: nowrap;
   position: relative;
   overflow: hidden;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 .btn-primary:active, .btn-primary:hover {
-  background: linear-gradient(135deg, rgba(255, 20, 60, 0.85), rgba(180, 0, 30, 0.95)), 
-              url('assets/product_action.jpg') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(255, 20, 60, 0.85), rgba(25, 38, 70, 0.92)), 
+              url('assets/spiderman_custom_bg.jpg') center/cover no-repeat;
   box-shadow: 0 6px 25px rgba(255, 0, 51, 0.8);
   transform: translateY(-1px);
 }
@@ -926,7 +926,7 @@ body::before {
   font-weight: 800;
 }
 
-/* Modal Overlay & Card with Spider-Man Theme Backdrop */
+/* Modal Overlay & Card with Custom HD Spider-Man Theme Backdrop */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -951,8 +951,8 @@ body::before {
 }
 
 .modal-card {
-  background: linear-gradient(180deg, rgba(15, 20, 32, 0.94) 0%, rgba(8, 11, 18, 0.98) 100%),
-              url('assets/product_hero.jpg') center/cover no-repeat;
+  background: linear-gradient(180deg, rgba(10, 15, 26, 0.90) 0%, rgba(5, 8, 15, 0.95) 100%),
+              url('assets/spiderman_custom_bg.jpg') center/cover no-repeat;
   border: 1px solid var(--spider-red);
   border-radius: var(--radius-lg);
   width: 100%;
@@ -962,7 +962,7 @@ body::before {
   padding: 20px 16px;
   position: relative;
   color: var(--text-main);
-  box-shadow: 0 10px 40px rgba(255, 0, 51, 0.3);
+  box-shadow: 0 10px 40px rgba(255, 0, 51, 0.35);
 }
 
 .close-modal {
