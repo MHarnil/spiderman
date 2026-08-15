@@ -6,9 +6,9 @@
 
 /* 1. DARK THEME (DEFAULT) */
 :root, :root[data-theme="dark"] {
-  --bg-main: #0a0d14;
-  --bg-card: rgba(18, 24, 38, 0.88);
-  --bg-card-hover: rgba(28, 36, 56, 0.95);
+  --bg-main: #060911;
+  --bg-card: rgba(14, 20, 34, 0.88);
+  --bg-card-hover: rgba(24, 32, 52, 0.95);
   --glass-border: rgba(255, 0, 51, 0.25);
   --glass-border-hover: rgba(255, 0, 51, 0.6);
   
@@ -120,6 +120,17 @@ html, body {
   padding-top: 46px;
   padding-bottom: 75px;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* BACKGROUND INTERACTIVE ANIMATED SPIDERS CANVAS */
+#spider-bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Background Cyber Mesh */

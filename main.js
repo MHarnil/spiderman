@@ -5,7 +5,155 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // --------------------------------------------------------------------------
-  // 0. THEME SWITCHER LOGIC (DARK -> LIGHT -> CYBER NEON)
+  // 0. BACKGROUND INTERACTIVE ANIMATED CRAWLING SPIDERS CANVAS SYSTEM
+  // --------------------------------------------------------------------------
+  const spiderBgCanvas = document.getElementById('spider-bg-canvas');
+  if (spiderBgCanvas) {
+    const sCtx = spiderBgCanvas.getContext('2d');
+    let width = (spiderBgCanvas.width = window.innerWidth);
+    let height = (spiderBgCanvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = (spiderBgCanvas.width = window.innerWidth);
+      height = (spiderBgCanvas.height = window.innerHeight);
+    });
+
+    const spiders = [];
+    const spiderCount = window.innerWidth < 768 ? 14 : 28;
+
+    for (let i = 0; i < spiderCount; i++) {
+      spiders.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 1.4,
+        vy: (Math.random() - 0.5) * 1.4,
+        size: Math.random() * 6 + 10, // 10px - 16px size
+        angle: Math.random() * Math.PI * 2,
+        legPhase: Math.random() * 10,
+        color: Math.random() > 0.35 ? '#ff0033' : '#00d2ff',
+        hasWebLine: Math.random() > 0.5
+      });
+    }
+
+    let mouseX = -1000;
+    let mouseY = -1000;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function drawSpider(s) {
+      sCtx.save();
+      sCtx.translate(s.x, s.y);
+      sCtx.rotate(s.angle + Math.PI / 2);
+
+      // Web Line hanging from top
+      if (s.hasWebLine && s.y > 0) {
+        sCtx.save();
+        sCtx.rotate(-(s.angle + Math.PI / 2));
+        sCtx.beginPath();
+        sCtx.moveTo(0, 0);
+        sCtx.lineTo(0, -s.y);
+        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+        sCtx.lineWidth = 0.8;
+        sCtx.stroke();
+        sCtx.restore();
+      }
+
+      // Spider Body Glow
+      sCtx.shadowBlur = 8;
+      sCtx.shadowColor = s.color;
+
+      // Spider Abdomen
+      sCtx.beginPath();
+      sCtx.ellipse(0, 0, s.size * 0.35, s.size * 0.45, 0, 0, Math.PI * 2);
+      sCtx.fillStyle = s.color === '#ff0033' ? 'rgba(255, 0, 51, 0.85)' : 'rgba(0, 210, 255, 0.85)';
+      sCtx.fill();
+
+      // Spider Head
+      sCtx.beginPath();
+      sCtx.arc(0, -s.size * 0.45, s.size * 0.22, 0, Math.PI * 2);
+      sCtx.fillStyle = '#0f172a';
+      sCtx.fill();
+      sCtx.strokeStyle = s.color;
+      sCtx.stroke();
+
+      sCtx.shadowBlur = 0;
+
+      // 8 Animated Crawling Legs
+      s.legPhase += 0.15;
+      for (let side = -1; side <= 1; side += 2) {
+        for (let i = 0; i < 4; i++) {
+          const legOffset = i * 0.25;
+          const legSwing = Math.sin(s.legPhase + legOffset) * 0.35;
+          const baseAngle = (i - 1.5) * 0.38 + legSwing;
+          
+          const kneeX = side * (s.size * 0.85) * Math.cos(baseAngle);
+          const kneeY = (s.size * 0.45) * Math.sin(baseAngle);
+
+          const tipX = side * (s.size * 1.35) * Math.cos(baseAngle + 0.3 * side);
+          const tipY = (s.size * 0.75) * Math.sin(baseAngle + 0.3 * side);
+
+          sCtx.beginPath();
+          sCtx.moveTo(0, (i - 1.5) * (s.size * 0.15));
+          sCtx.lineTo(kneeX, kneeY);
+          sCtx.lineTo(tipX, tipY);
+          sCtx.strokeStyle = s.color;
+          sCtx.lineWidth = 1.2;
+          sCtx.stroke();
+        }
+      }
+
+      sCtx.restore();
+    }
+
+    function animateSpiders() {
+      sCtx.clearRect(0, 0, width, height);
+
+      spiders.forEach((s) => {
+        // Move
+        s.x += s.vx;
+        s.y += s.vy;
+
+        // Turn smoothly
+        s.angle = Math.atan2(s.vy, s.vx);
+
+        // Randomly alter direction slightly
+        if (Math.random() < 0.02) {
+          s.vx += (Math.random() - 0.5) * 0.6;
+          s.vy += (Math.random() - 0.5) * 0.6;
+          
+          const speed = Math.hypot(s.vx, s.vy);
+          if (speed > 1.8) {
+            s.vx = (s.vx / speed) * 1.8;
+            s.vy = (s.vy / speed) * 1.8;
+          }
+        }
+
+        // Avoid mouse cursor gently
+        const dx = s.x - mouseX;
+        const dy = s.y - mouseY;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 120) {
+          s.vx += (dx / dist) * 0.35;
+          s.vy += (dy / dist) * 0.35;
+        }
+
+        // Bounce off canvas walls
+        if (s.x < 10 || s.x > width - 10) s.vx *= -1;
+        if (s.y < 10 || s.y > height - 10) s.vy *= -1;
+
+        drawSpider(s);
+      });
+
+      requestAnimationFrame(animateSpiders);
+    }
+
+    animateSpiders();
+  }
+
+  // --------------------------------------------------------------------------
+  // 1. THEME SWITCHER LOGIC (DARK -> LIGHT -> CYBER NEON)
   // --------------------------------------------------------------------------
   const themeBtn = document.getElementById('theme-toggle-btn');
   const themes = ['dark', 'light', 'cyber'];
@@ -30,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 1. UNIFORM GALLERY THUMBNAIL SELECTOR (PURE PRODUCT IMAGES)
+  // 2. UNIFORM GALLERY THUMBNAIL SELECTOR (PURE PRODUCT IMAGES)
   // --------------------------------------------------------------------------
   const thumbnails = document.querySelectorAll('.thumb-item');
   const mainImg = document.getElementById('pdp-main-img');
@@ -54,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 2. PINCODE CHECKER & AUTO-FETCH CITY & STATE API
+  // 3. PINCODE CHECKER & AUTO-FETCH CITY & STATE API
   // --------------------------------------------------------------------------
   const pincodeBtn = document.getElementById('pincode-btn');
   const pincodeInputPDP = document.getElementById('pincode-input');
@@ -118,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 3. STRICT INDIAN MOBILE NUMBER VALIDATION LOGIC
+  // 4. STRICT INDIAN MOBILE NUMBER VALIDATION LOGIC
   // --------------------------------------------------------------------------
   const formPhone = document.getElementById('form-phone');
   const phoneValidationMsg = document.getElementById('phone-validation-msg');
@@ -175,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 4. TABS SWITCHER (SPECS / DESC / SAFETY)
+  // 5. TABS SWITCHER (SPECS / DESC / SAFETY)
   // --------------------------------------------------------------------------
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
@@ -194,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 5. ORIGINAL SPIDER-MAN "THWIP!" SOUND (AUTHENTIC TONE, TIGHT STOP, NO VIBRATION)
+  // 6. ORIGINAL SPIDER-MAN "THWIP!" SOUND (AUTHENTIC TONE, TIGHT STOP, NO VIBRATION)
   // --------------------------------------------------------------------------
   let soundEnabled = true;
   let audioCtx = null;
@@ -212,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
     const now = audioCtx.currentTime;
-    const duration = 0.08; // Tight duration: exact original "THWIP!" tone with 0 lingering vibration
+    const duration = 0.08;
     
     const bufferSize = Math.floor(audioCtx.sampleRate * duration);
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -296,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 6. TARGET SHOOTER GAME CANVAS
+  // 7. TARGET SHOOTER GAME CANVAS
   // --------------------------------------------------------------------------
   const gameContainer = document.getElementById('game-container');
   const gameCanvas = document.getElementById('game-canvas');
@@ -434,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 7. STICKY BAR & DIRECT WHATSAPP CHECKOUT FORM (STRICT MOBILE VALIDATION)
+  // 8. STICKY BAR & DIRECT WHATSAPP CHECKOUT FORM (STRICT MOBILE VALIDATION)
   // --------------------------------------------------------------------------
   const stickyBar = document.getElementById('sticky-buy-bar');
   window.addEventListener('scroll', () => {
