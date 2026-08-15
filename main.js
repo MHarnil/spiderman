@@ -19,19 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const spiders = [];
-    const spiderCount = window.innerWidth < 768 ? 14 : 28;
+    const spiderCount = window.innerWidth < 768 ? 22 : 38;
 
     for (let i = 0; i < spiderCount; i++) {
       spiders.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 1.4,
-        vy: (Math.random() - 0.5) * 1.4,
-        size: Math.random() * 6 + 10, // 10px - 16px size
+        vx: (Math.random() - 0.5) * 1.6,
+        vy: (Math.random() - 0.5) * 1.6,
+        size: Math.random() * 8 + 12, // 12px - 20px size for high visibility
         angle: Math.random() * Math.PI * 2,
         legPhase: Math.random() * 10,
-        color: Math.random() > 0.35 ? '#ff0033' : '#00d2ff',
-        hasWebLine: Math.random() > 0.5
+        color: Math.random() > 0.4 ? '#ff0033' : '#00d2ff',
+        hasWebLine: Math.random() > 0.4
       });
     }
 
@@ -54,52 +54,53 @@ document.addEventListener('DOMContentLoaded', () => {
         sCtx.beginPath();
         sCtx.moveTo(0, 0);
         sCtx.lineTo(0, -s.y);
-        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-        sCtx.lineWidth = 0.8;
+        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        sCtx.lineWidth = 1.0;
         sCtx.stroke();
         sCtx.restore();
       }
 
       // Spider Body Glow
-      sCtx.shadowBlur = 8;
+      sCtx.shadowBlur = 12;
       sCtx.shadowColor = s.color;
 
       // Spider Abdomen
       sCtx.beginPath();
-      sCtx.ellipse(0, 0, s.size * 0.35, s.size * 0.45, 0, 0, Math.PI * 2);
-      sCtx.fillStyle = s.color === '#ff0033' ? 'rgba(255, 0, 51, 0.85)' : 'rgba(0, 210, 255, 0.85)';
+      sCtx.ellipse(0, 0, s.size * 0.38, s.size * 0.48, 0, 0, Math.PI * 2);
+      sCtx.fillStyle = s.color === '#ff0033' ? 'rgba(255, 0, 51, 0.95)' : 'rgba(0, 210, 255, 0.95)';
       sCtx.fill();
 
       // Spider Head
       sCtx.beginPath();
-      sCtx.arc(0, -s.size * 0.45, s.size * 0.22, 0, Math.PI * 2);
-      sCtx.fillStyle = '#0f172a';
+      sCtx.arc(0, -s.size * 0.48, s.size * 0.24, 0, Math.PI * 2);
+      sCtx.fillStyle = '#0a0d18';
       sCtx.fill();
       sCtx.strokeStyle = s.color;
+      sCtx.lineWidth = 1.5;
       sCtx.stroke();
 
       sCtx.shadowBlur = 0;
 
       // 8 Animated Crawling Legs
-      s.legPhase += 0.15;
+      s.legPhase += 0.18;
       for (let side = -1; side <= 1; side += 2) {
         for (let i = 0; i < 4; i++) {
           const legOffset = i * 0.25;
-          const legSwing = Math.sin(s.legPhase + legOffset) * 0.35;
-          const baseAngle = (i - 1.5) * 0.38 + legSwing;
+          const legSwing = Math.sin(s.legPhase + legOffset) * 0.38;
+          const baseAngle = (i - 1.5) * 0.4 + legSwing;
           
-          const kneeX = side * (s.size * 0.85) * Math.cos(baseAngle);
-          const kneeY = (s.size * 0.45) * Math.sin(baseAngle);
+          const kneeX = side * (s.size * 0.9) * Math.cos(baseAngle);
+          const kneeY = (s.size * 0.5) * Math.sin(baseAngle);
 
-          const tipX = side * (s.size * 1.35) * Math.cos(baseAngle + 0.3 * side);
-          const tipY = (s.size * 0.75) * Math.sin(baseAngle + 0.3 * side);
+          const tipX = side * (s.size * 1.45) * Math.cos(baseAngle + 0.32 * side);
+          const tipY = (s.size * 0.8) * Math.sin(baseAngle + 0.32 * side);
 
           sCtx.beginPath();
-          sCtx.moveTo(0, (i - 1.5) * (s.size * 0.15));
+          sCtx.moveTo(0, (i - 1.5) * (s.size * 0.16));
           sCtx.lineTo(kneeX, kneeY);
           sCtx.lineTo(tipX, tipY);
           sCtx.strokeStyle = s.color;
-          sCtx.lineWidth = 1.2;
+          sCtx.lineWidth = 1.6;
           sCtx.stroke();
         }
       }
@@ -119,14 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
         s.angle = Math.atan2(s.vy, s.vx);
 
         // Randomly alter direction slightly
-        if (Math.random() < 0.02) {
-          s.vx += (Math.random() - 0.5) * 0.6;
-          s.vy += (Math.random() - 0.5) * 0.6;
+        if (Math.random() < 0.025) {
+          s.vx += (Math.random() - 0.5) * 0.7;
+          s.vy += (Math.random() - 0.5) * 0.7;
           
           const speed = Math.hypot(s.vx, s.vy);
-          if (speed > 1.8) {
-            s.vx = (s.vx / speed) * 1.8;
-            s.vy = (s.vy / speed) * 1.8;
+          if (speed > 2.0) {
+            s.vx = (s.vx / speed) * 2.0;
+            s.vy = (s.vy / speed) * 2.0;
           }
         }
 
@@ -134,9 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const dx = s.x - mouseX;
         const dy = s.y - mouseY;
         const dist = Math.hypot(dx, dy);
-        if (dist < 120) {
-          s.vx += (dx / dist) * 0.35;
-          s.vy += (dy / dist) * 0.35;
+        if (dist < 140) {
+          s.vx += (dx / dist) * 0.45;
+          s.vy += (dy / dist) * 0.45;
         }
 
         // Bounce off canvas walls
