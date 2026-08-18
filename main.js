@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Quantity Selector Pricing for Pack of 2 (1 Pair: 599, 2 Pairs: 999, 3 Pairs: 1399)
+  // Quantity Selector Pricing for Pack of 2 (1 Pair: 899, 2 Pairs: 1499, 3 Pairs: 1999)
   const qtySelect = document.getElementById('qty-selector');
   const orderPriceDisplay = document.getElementById('order-price-display');
   const orderTotalDisplay = document.getElementById('order-total-display');
@@ -327,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (qtySelect) {
     qtySelect.addEventListener('change', () => {
       const qty = parseInt(qtySelect.value);
-      let total = 599;
-      if (qty === 2) total = 999;
-      if (qty === 3) total = 1399;
+      let total = 899;
+      if (qty === 2) total = 1499;
+      if (qty === 3) total = 1999;
 
       if (orderPriceDisplay) orderPriceDisplay.textContent = `₹${total}`;
       if (orderTotalDisplay) orderTotalDisplay.textContent = `₹${total}`;
@@ -664,10 +664,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const payMethod = selectedPay ? selectedPay.textContent.trim() : '💵 Cash on Delivery';
       
       const qtySelect = document.getElementById('qty-selector');
-      const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Pair (Pack of 2 - Both Hands) - ₹599';
+      const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Pair (Pack of 2 - Both Hands) - ₹899';
       
       const orderTotalDisplay = document.getElementById('order-total-display');
-      const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹599';
+      const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹899';
 
       const waNumber = '919328856046';
       
