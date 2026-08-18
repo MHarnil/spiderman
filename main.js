@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         y: Math.random() * height,
         vx: (Math.random() - 0.5) * 1.6,
         vy: (Math.random() - 0.5) * 1.6,
-        size: Math.random() * 8 + 12,
+        size: Math.random() * 8 + 14,
         angle: Math.random() * Math.PI * 2,
         legPhase: Math.random() * 10,
         color: Math.random() > 0.4 ? '#ff0033' : '#00d2ff',
@@ -53,50 +53,75 @@ document.addEventListener('DOMContentLoaded', () => {
         sCtx.beginPath();
         sCtx.moveTo(0, 0);
         sCtx.lineTo(0, -s.y);
-        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-        sCtx.lineWidth = 1.0;
+        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+        sCtx.lineWidth = 0.9;
         sCtx.stroke();
         sCtx.restore();
       }
 
-      sCtx.shadowBlur = 12;
+      sCtx.shadowBlur = 14;
       sCtx.shadowColor = s.color;
 
       sCtx.beginPath();
-      sCtx.ellipse(0, 0, s.size * 0.38, s.size * 0.48, 0, 0, Math.PI * 2);
-      sCtx.fillStyle = s.color === '#ff0033' ? 'rgba(255, 0, 51, 0.95)' : 'rgba(0, 210, 255, 0.95)';
+      sCtx.moveTo(0, s.size * 0.65);
+      sCtx.lineTo(-s.size * 0.4, s.size * 0.2);
+      sCtx.lineTo(-s.size * 0.45, -s.size * 0.2);
+      sCtx.lineTo(0, -s.size * 0.55);
+      sCtx.lineTo(s.size * 0.45, -s.size * 0.2);
+      sCtx.lineTo(s.size * 0.4, s.size * 0.2);
+      sCtx.closePath();
+
+      sCtx.fillStyle = s.color === '#ff0033' ? 'rgba(230, 0, 45, 0.95)' : 'rgba(0, 210, 255, 0.95)';
       sCtx.fill();
+      sCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+      sCtx.lineWidth = 1.2;
+      sCtx.stroke();
 
       sCtx.beginPath();
-      sCtx.arc(0, -s.size * 0.48, s.size * 0.24, 0, Math.PI * 2);
-      sCtx.fillStyle = '#0a0d18';
+      sCtx.moveTo(0, -s.size * 0.35);
+      sCtx.lineTo(-s.size * 0.18, 0);
+      sCtx.lineTo(0, s.size * 0.35);
+      sCtx.lineTo(s.size * 0.18, 0);
+      sCtx.closePath();
+      sCtx.fillStyle = '#ffffff';
       sCtx.fill();
-      sCtx.strokeStyle = s.color;
-      sCtx.lineWidth = 1.5;
-      sCtx.stroke();
+
+      const eyeColor = s.color === '#ff0033' ? '#00d2ff' : '#ff0033';
+      sCtx.fillStyle = eyeColor;
+      sCtx.beginPath();
+      sCtx.arc(-s.size * 0.15, -s.size * 0.5, s.size * 0.07, 0, Math.PI * 2);
+      sCtx.arc(s.size * 0.15, -s.size * 0.5, s.size * 0.07, 0, Math.PI * 2);
+      sCtx.arc(-s.size * 0.3, -s.size * 0.42, s.size * 0.05, 0, Math.PI * 2);
+      sCtx.arc(s.size * 0.3, -s.size * 0.42, s.size * 0.05, 0, Math.PI * 2);
+      sCtx.fill();
 
       sCtx.shadowBlur = 0;
 
       s.legPhase += 0.18;
       for (let side = -1; side <= 1; side += 2) {
         for (let i = 0; i < 4; i++) {
-          const legOffset = i * 0.25;
-          const legSwing = Math.sin(s.legPhase + legOffset) * 0.38;
-          const baseAngle = (i - 1.5) * 0.4 + legSwing;
-          
-          const kneeX = side * (s.size * 0.9) * Math.cos(baseAngle);
-          const kneeY = (s.size * 0.5) * Math.sin(baseAngle);
+          const legOffset = i * 0.28;
+          const legSwing = Math.sin(s.legPhase + legOffset) * 0.42;
+          const baseAngle = (i - 1.5) * 0.42 + legSwing;
 
-          const tipX = side * (s.size * 1.45) * Math.cos(baseAngle + 0.32 * side);
-          const tipY = (s.size * 0.8) * Math.sin(baseAngle + 0.32 * side);
+          const kneeX = side * (s.size * 1.0) * Math.cos(baseAngle);
+          const kneeY = (s.size * 0.55) * Math.sin(baseAngle) + (i - 1.5) * (s.size * 0.2);
+
+          const ankleX = side * (s.size * 1.5) * Math.cos(baseAngle + 0.3 * side);
+          const ankleY = (s.size * 0.9) * Math.sin(baseAngle + 0.3 * side) + (i - 1.5) * (s.size * 0.1);
 
           sCtx.beginPath();
-          sCtx.moveTo(0, (i - 1.5) * (s.size * 0.16));
+          sCtx.moveTo(0, (i - 1.5) * (s.size * 0.18));
           sCtx.lineTo(kneeX, kneeY);
-          sCtx.lineTo(tipX, tipY);
+          sCtx.lineTo(ankleX, ankleY);
           sCtx.strokeStyle = s.color;
-          sCtx.lineWidth = 1.6;
+          sCtx.lineWidth = 1.8;
           sCtx.stroke();
+
+          sCtx.beginPath();
+          sCtx.arc(kneeX, kneeY, s.size * 0.08, 0, Math.PI * 2);
+          sCtx.fillStyle = '#ffffff';
+          sCtx.fill();
         }
       }
 
@@ -294,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Quantity Selector Pricing (1 Set: 499, 2 Sets: 599, 3 Sets: 699)
+  // Quantity Selector Pricing for Pack of 2 (1 Pair: 599, 2 Pairs: 999, 3 Pairs: 1399)
   const qtySelect = document.getElementById('qty-selector');
   const orderPriceDisplay = document.getElementById('order-price-display');
   const orderTotalDisplay = document.getElementById('order-total-display');
@@ -302,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (qtySelect) {
     qtySelect.addEventListener('change', () => {
       const qty = parseInt(qtySelect.value);
-      let total = 499;
-      if (qty === 2) total = 599;
-      if (qty === 3) total = 699;
+      let total = 599;
+      if (qty === 2) total = 999;
+      if (qty === 3) total = 1399;
 
       if (orderPriceDisplay) orderPriceDisplay.textContent = `₹${total}`;
       if (orderTotalDisplay) orderTotalDisplay.textContent = `₹${total}`;
@@ -639,10 +664,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const payMethod = selectedPay ? selectedPay.textContent.trim() : '💵 Cash on Delivery';
       
       const qtySelect = document.getElementById('qty-selector');
-      const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Set - ₹499';
+      const qtyText = qtySelect ? qtySelect.options[qtySelect.selectedIndex].text : '1 Pair (Pack of 2 - Both Hands) - ₹599';
       
       const orderTotalDisplay = document.getElementById('order-total-display');
-      const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹499';
+      const total = orderTotalDisplay ? orderTotalDisplay.textContent.trim() : '₹599';
 
       const waNumber = '919328856046';
       
@@ -653,7 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `🏙️ *City/District:* ${city}\n` +
         `🗺️ *State:* ${state}\n` +
         `📌 *Pincode:* ${pincode}\n` +
-        `📦 *Product:* Spider Web Shooter Hero Launcher Set\n` +
+        `📦 *Product:* Spider Web Shooter Dual Launcher Set (Pack of 2 - Both Hands)\n` +
         `🔢 *Quantity:* ${qtyText}\n` +
         `💵 *Total Amount:* ${total} (${payMethod})\n\n` +
         `⚡ *Please confirm my order and send dispatch details!*`;
